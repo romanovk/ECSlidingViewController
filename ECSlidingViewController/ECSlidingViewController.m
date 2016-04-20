@@ -260,6 +260,7 @@
         
         if ([self isViewLoaded]) {
             [_topViewController beginAppearanceTransition:YES animated:NO];
+            _topViewController.view.frame = [self topViewCalculatedFrameForPosition:self.currentTopViewPosition];
             [self.view addSubview:_topViewController.view];
             [_topViewController endAppearanceTransition];
         }
@@ -469,12 +470,6 @@
     if (!(self.topViewController.edgesForExtendedLayout & UIRectEdgeBottom)) {
         CGFloat bottomLayoutGuideLength = [self.bottomLayoutGuide length];
         containerViewFrame.size.height -= bottomLayoutGuideLength;
-    }
-    
-    if ((self.topViewController.edgesForExtendedLayout & UIRectEdgeAll) && [UIApplication sharedApplication].statusBarFrame.size.height > 20.f) {
-        CGFloat topLayoutGuideLength = [self.topLayoutGuide length];
-        containerViewFrame.origin.y     = topLayoutGuideLength;
-        containerViewFrame.size.height -= topLayoutGuideLength;
     }
     
     switch(position) {
