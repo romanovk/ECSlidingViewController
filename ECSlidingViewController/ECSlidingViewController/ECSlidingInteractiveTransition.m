@@ -90,25 +90,29 @@
         }
         case UIGestureRecognizerStateEnded:
         case UIGestureRecognizerStateCancelled: {
-            BOOL isPanningRight = velocityX > 0;
+            BOOL isNeedFinishTransaction = [self isNeedFinishTransactionForTranslationX:translationX andVelocityX:velocityX];
             
             if (self.coordinatorInteractionEnded) self.coordinatorInteractionEnded((id<UIViewControllerTransitionCoordinatorContext>)self.slidingViewController);
             
-            if (isPanningRight && self.positiveLeftToRight) {
+            if ( isNeedFinishTransaction) {
                 [self finishInteractiveTransition];
-            } else if (isPanningRight && !self.positiveLeftToRight) {
+            } else {
                 [self cancelInteractiveTransition];
-            } else if (!isPanningRight && self.positiveLeftToRight) {
-                [self cancelInteractiveTransition];
-            } else if (!isPanningRight && !self.positiveLeftToRight) {
-                [self finishInteractiveTransition];
             }
-            
             break;
         }
         default:
             break;
     }
+}
+
+- (BOOL)isNeedFinishTransactionForTranslationX:(CGFloat)translationX andVelocityX:(CGFloat)velocityX {
+    static CGFloat finishVelocity = 500;
+    
+    if( fabs(translationX) > self.fullWidth / 2 || finishVelocity <= fabs(velocityX))
+        return YES;
+    else
+        return NO;
 }
 
 @end

@@ -260,6 +260,7 @@
         
         if ([self isViewLoaded]) {
             [_topViewController beginAppearanceTransition:YES animated:NO];
+            _topViewController.view.frame = [self topViewCalculatedFrameForPosition:self.currentTopViewPosition];
             [self.view addSubview:_topViewController.view];
             [_topViewController endAppearanceTransition];
         }
@@ -813,6 +814,12 @@
 
 - (void)cancelInteractiveTransition {
     _transitionWasCancelled = YES;
+
+    // Reset all the animation and reset frame to the original position here in order to prevent flickering
+    //[self.topViewController.view.layer removeAllAnimations];
+    [UIView animateWithDuration:0.3 animations:^{
+        self.topViewController.view.frame = [self initialFrameForViewController:self.topViewController];
+    }];
 }
 
 - (void)completeTransition:(BOOL)didComplete {
