@@ -65,6 +65,8 @@
     CGFloat translationX  = [recognizer translationInView:self.slidingViewController.view].x;
     CGFloat velocityX     = [recognizer velocityInView:self.slidingViewController.view].x;
 
+    BOOL isMovingRight;
+    
     switch (recognizer.state) {
         case UIGestureRecognizerStateBegan: {
             BOOL isMovingRight = velocityX > 0;
@@ -90,7 +92,7 @@
         }
         case UIGestureRecognizerStateEnded:
         case UIGestureRecognizerStateCancelled: {
-            BOOL isNeedFinishTransaction = [self isNeedFinishTransactionForTranslationX:translationX andVelocityX:velocityX];
+            BOOL isNeedFinishTransaction = [self isNeedFinishTransactionForTranslationX:translationX velocityX:velocityX isMovingRight:isMovingRight];
             
             if (self.coordinatorInteractionEnded) self.coordinatorInteractionEnded((id<UIViewControllerTransitionCoordinatorContext>)self.slidingViewController);
             
@@ -106,13 +108,20 @@
     }
 }
 
-- (BOOL)isNeedFinishTransactionForTranslationX:(CGFloat)translationX andVelocityX:(CGFloat)velocityX {
+- (BOOL)isNeedFinishTransactionForTranslationX:(CGFloat)translationX velocityX:(CGFloat)velocityX isMovingRight:(BOOL)isMovingRight{
     static CGFloat finishVelocity = 500;
     
-    if( fabs(translationX) > self.fullWidth / 2 || finishVelocity <= fabs(velocityX))
+    if( (finishVelocity <= velocityX && self.slidingViewController.currentTopViewPosition == ECSlidingViewControllerTopViewPositionCentered && isMovingRight) ||
+        ((finishVelocity * -1.0) >= velocityX && self.slidingViewController.currentTopViewPosition == ECSlidingViewControllerTopViewPositionAnchoredRight) ||
+        (finishVelocity <= velocityX && self.slidingViewController.currentTopViewPosition == ECSlidingViewControllerTopViewPositionAnchoredLeft) ||
+        ((finishVelocity * -1.0) >= velocityX && self.slidingViewController.currentTopViewPosition == ECSlidingViewControllerTopViewPositionCentered && self.slidingViewController.underRightViewController && isMovingRight)) {
+        
         return YES;
-    else
+    } else if( fabs(translationX) > self.fullWidth / 2) {
+        return YES;
+    } else {
         return NO;
+    }
 }
 
 @end
