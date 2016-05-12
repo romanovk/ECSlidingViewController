@@ -36,7 +36,7 @@
     self.transitionContext = transitionContext;
     
     CALayer *containerLayer = [self.transitionContext containerView].layer;
-    [self removeAnimationsRecursively:containerLayer];
+    //[self removeAnimationsRecursively:containerLayer];
     [self.animationController animateTransition:transitionContext];
     [self updateInteractiveTransition:0];
 }
