@@ -65,8 +65,6 @@
     CGFloat translationX  = [recognizer translationInView:self.slidingViewController.view].x;
     CGFloat velocityX     = [recognizer velocityInView:self.slidingViewController.view].x;
 
-    BOOL isMovingRight;
-    
     switch (recognizer.state) {
         case UIGestureRecognizerStateBegan: {
             BOOL isMovingRight = velocityX > 0;
@@ -92,7 +90,7 @@
         }
         case UIGestureRecognizerStateEnded:
         case UIGestureRecognizerStateCancelled: {
-            BOOL isNeedFinishTransaction = [self isNeedFinishTransactionForTranslationX:translationX velocityX:velocityX isMovingRight:isMovingRight];
+            BOOL isNeedFinishTransaction = [self isNeedFinishTransactionForTranslationX:translationX velocityX:velocityX isMovingRight:_positiveLeftToRight];
             
             if (self.coordinatorInteractionEnded) self.coordinatorInteractionEnded((id<UIViewControllerTransitionCoordinatorContext>)self.slidingViewController);
             
@@ -114,10 +112,10 @@
     if( (finishVelocity <= velocityX && self.slidingViewController.currentTopViewPosition == ECSlidingViewControllerTopViewPositionCentered && isMovingRight) ||
         ((finishVelocity * -1.0) >= velocityX && self.slidingViewController.currentTopViewPosition == ECSlidingViewControllerTopViewPositionAnchoredRight) ||
         (finishVelocity <= velocityX && self.slidingViewController.currentTopViewPosition == ECSlidingViewControllerTopViewPositionAnchoredLeft) ||
-        ((finishVelocity * -1.0) >= velocityX && self.slidingViewController.currentTopViewPosition == ECSlidingViewControllerTopViewPositionCentered && self.slidingViewController.underRightViewController && isMovingRight)) {
+        ((finishVelocity * -1.0) >= velocityX && self.slidingViewController.currentTopViewPosition == ECSlidingViewControllerTopViewPositionCentered && self.slidingViewController.underRightViewController && !isMovingRight)) {
         
         return YES;
-    } else if( fabs(translationX) > self.fullWidth / 2) {
+    } else if( fabs(translationX / self.fullWidth) > 0.55) {
         return YES;
     } else {
         return NO;
