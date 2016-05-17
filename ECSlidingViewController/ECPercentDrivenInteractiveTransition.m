@@ -65,8 +65,6 @@
 - (void)cancelInteractiveTransition {
     if (!self.isActive) return;
     
-    [self.transitionContext cancelInteractiveTransition];
-    
     CADisplayLink *displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(reversePausedAnimation:)];
     [displayLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
 }
@@ -96,6 +94,7 @@
     if (_percentComplete <= 0.0) {
         _percentComplete = 0.0;
         [displayLink invalidate];
+        [self.transitionContext cancelInteractiveTransition];
     }
     
     [self updateInteractiveTransition:self.percentComplete];
