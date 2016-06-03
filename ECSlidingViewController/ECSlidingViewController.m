@@ -846,9 +846,6 @@
         [self.currentAnimationController animationEnded:didComplete];
     }
     
-    if (self.animationComplete) self.animationComplete();
-    self.animationComplete = nil;
-    
     [self updateTopViewGestures];
     [self endAppearanceTransitionForOperation:self.currentOperation isCancelled:[self transitionWasCancelled]];
     
@@ -863,6 +860,9 @@
     self.view.userInteractionEnabled = YES;
     [UIViewController attemptRotationToDeviceOrientation];
     [self setNeedsStatusBarAppearanceUpdate];
+    
+    if (self.animationComplete) self.animationComplete();
+    self.animationComplete = nil;
 }
 
 - (UIViewController *)viewControllerForKey:(NSString *)key {
